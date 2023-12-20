@@ -1,0 +1,19 @@
+{
+    "name": "fabithub/inertia-codeigniter-4",
+    "description": "The Codeigniter 4 adapter for inertia.js",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Fabithub\\InertiaCodeigniter4\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Krishna Gujjjar",
+            "email": "krishnagujjjar@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {}
+}
