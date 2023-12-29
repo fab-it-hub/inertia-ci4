@@ -11,6 +11,7 @@
     }
   ],
   "minimum-stability": "dev",
+  "prefer-stable": true,
   "autoload": {
     "psr-4": {
       "Inertia\\": "src/"
@@ -19,5 +20,13 @@
   "require": {
     "php": "^8.0|^8.1|^8.2|^8.3",
     "codeigniter4/framework": "^4.3|^4.4"
+  },
+  "require-dev": {
+    "codeigniter4/devkit": "^1.1"
+  },
+  "config": {
+    "allow-plugins": {
+      "phpstan/extension-installer": true
+    }
   }
 }
