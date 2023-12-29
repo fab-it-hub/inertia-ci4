@@ -1,17 +1,32 @@
 <?php
 
+/**
+ * This file is part of Inertia.js Codeigniter 4.
+ *
+ * (c) 2023 Fab IT Hub <hello@fabithub.com>
+ *
+ * For the full copyright and license information, please view
+ * the LICENSE file that was distributed with this source code.
+ */
+
 namespace Inertia;
 
 use Closure;
-use CodeIgniter\HTTP\{RedirectResponse, RequestInterface};
-use Inertia\Extras\{Arr, Http};
+use CodeIgniter\HTTP\RedirectResponse;
+use CodeIgniter\HTTP\RequestInterface;
+use Inertia\Extras\Arr;
+use Inertia\Extras\Http;
 
 class ResponseFactory
 {
-    /** @var array */
+    /**
+     * @var array
+     */
     protected $sharedProps = [];
 
-    /** @var \Closure|string|null */
+    /**
+     * @var Closure|string|null
+     */
     protected $version;
 
     public function share(string|array $key, $value = null): void
@@ -38,8 +53,7 @@ class ResponseFactory
     }
 
     /**
-     * @param \Closure|string|null $version
-     * @return void
+     * @param Closure|string|null $version
      */
     public function version($version): void
     {
@@ -53,7 +67,7 @@ class ResponseFactory
 
     public function render(string $component, array $props = []): string
     {
-        /** @var \Inertia\Config\Inertia */
+        /** @var Config\Inertia */
         $config = \config('Inertia');
 
         return (string) new Response($component, array_merge($this->sharedProps, $props), $config->rootView, $this->getVersion());

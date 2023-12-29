@@ -1,18 +1,27 @@
 <?php
 
+/**
+ * This file is part of Inertia.js Codeigniter 4.
+ *
+ * (c) 2023 Fab IT Hub <hello@fabithub.com>
+ *
+ * For the full copyright and license information, please view
+ * the LICENSE file that was distributed with this source code.
+ */
+
 namespace Inertia;
 
 use Inertia\Config\Services;
-use Inertia\Extras\{Arr, Http};
+use Inertia\Extras\Arr;
+use Inertia\Extras\Http;
 
 class Response
 {
-
-    protected array $props = [];
-    protected array $viewData = [];
-    protected string $version = '';
+    protected array $props      = [];
+    protected array $viewData   = [];
+    protected string $version   = '';
     protected string $component = '';
-    protected string $rootView = 'app';
+    protected string $rootView  = 'app';
 
     public function __construct(string $component, array $props, string $rootView = 'app', string $version = '')
     {
@@ -20,7 +29,7 @@ class Response
     }
 
     /**
-     * @param string|array $key
+     * @param array|string $key
      * @param mixed        $value
      *
      * @return $this
@@ -44,7 +53,7 @@ class Response
     }
 
     /**
-     * @param string|array $key
+     * @param array|string $key
      * @param mixed        $value
      *
      * @return $this

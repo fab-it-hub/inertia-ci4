@@ -1,9 +1,20 @@
 <?php
 
+/**
+ * This file is part of Inertia.js Codeigniter 4.
+ *
+ * (c) 2023 Fab IT Hub <hello@fabithub.com>
+ *
+ * For the full copyright and license information, please view
+ * the LICENSE file that was distributed with this source code.
+ */
+
 namespace Inertia;
 
 use CodeIgniter\Filters\FilterInterface;
-use CodeIgniter\HTTP\{RedirectResponse, RequestInterface, ResponseInterface};
+use CodeIgniter\HTTP\RedirectResponse;
+use CodeIgniter\HTTP\RequestInterface;
+use CodeIgniter\HTTP\ResponseInterface;
 
 class Middleware implements FilterInterface
 {
@@ -19,9 +30,9 @@ class Middleware implements FilterInterface
     public function withShare(RequestInterface $request): array
     {
         return [
-            'alert'  => fn () => session()->getFlashdata('alert'),
+            'alert'  => static fn () => session()->getFlashdata('alert'),
             'errors' => fn () => $this->resolveValidationErrors($request),
-            'flash'  => fn () => ['success' => session()->getFlashdata('success'), 'error' => session()->getFlashdata('error')],
+            'flash'  => static fn () => ['success' => session()->getFlashdata('success'), 'error' => session()->getFlashdata('error')],
         ];
     }
 
@@ -34,8 +45,6 @@ class Middleware implements FilterInterface
     /**
      * Handle the incoming request.
      *
-     * @param  \CodeIgniter\HTTP\RequestInterface  $request
-     * @param  \CodeIgniter\HTTP\ResponseInterface  $response
      * @param null $arguments
      *
      * @return mixed
@@ -44,7 +53,7 @@ class Middleware implements FilterInterface
     {
         $response->setHeader('Vary', 'X-Inertia');
 
-        if (!$request->header('X-Inertia')) {
+        if (! $request->header('X-Inertia')) {
             return $response;
         }
 
@@ -60,7 +69,7 @@ class Middleware implements FilterInterface
             $response = $this->onEmptyResponse();
         }
 
-        if ($response->getStatusCode() === $response::HTTP_FOUND && \in_array($request->getMethod(), ['put', 'patch', 'delete'])) {
+        if ($response->getStatusCode() === $response::HTTP_FOUND && \in_array($request->getMethod(), ['put', 'patch', 'delete'], true)) {
             $response->setStatusCode($response::HTTP_SEE_OTHER);
         }
 
@@ -79,13 +88,9 @@ class Middleware implements FilterInterface
         return Inertia::location($request->getUri());
     }
 
-
     /**
      * Resolves and prepares validation errors in such
      * a way that they are easier to use client-side.
-     *
-     * @param  \CodeIgniter\HTTP\RequestInterface  $request
-     * @return object
      */
     private function resolveValidationErrors(RequestInterface $request): object
     {
@@ -96,7 +101,7 @@ class Middleware implements FilterInterface
 
         $errors = session()->getFlashdata('errors') ?? $validation->getErrors();
 
-        if (!$errors) {
+        if (! $errors) {
             return (object) [];
         }
 

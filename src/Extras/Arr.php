@@ -1,5 +1,14 @@
 <?php
 
+/**
+ * This file is part of Inertia.js Codeigniter 4.
+ *
+ * (c) 2023 Fab IT Hub <hello@fabithub.com>
+ *
+ * For the full copyright and license information, please view
+ * the LICENSE file that was distributed with this source code.
+ */
+
 namespace Inertia\Extras;
 
 use ArrayAccess;
@@ -10,8 +19,7 @@ class Arr
     /**
      * Determine whether the given value is array accessible.
      *
-     * @param  mixed  $value
-     * @return bool
+     * @param mixed $value
      */
     public static function accessible($value): bool
     {
@@ -21,9 +29,8 @@ class Arr
     /**
      * Determine if the given key exists in the provided array.
      *
-     * @param  \ArrayAccess|array  $array
-     * @param  string|int  $key
-     * @return bool
+     * @param array|ArrayAccess $array
+     * @param int|string        $key
      */
     public static function exists($array, $key): bool
     {
@@ -41,18 +48,19 @@ class Arr
     /**
      * Get an item from an array using "dot" notation.
      *
-     * @param  \ArrayAccess|array  $array
-     * @param  string|int|null  $key
-     * @param  mixed  $default
+     * @param array|ArrayAccess $array
+     * @param int|string|null   $key
+     * @param mixed             $default
+     *
      * @return mixed
      */
     public static function get($array, $key, $default = null)
     {
-        if (!static::accessible($array)) {
+        if (! static::accessible($array)) {
             return static::value($default);
         }
 
-        if (is_null($key)) {
+        if (null === $key) {
             return $array;
         }
 
@@ -60,7 +68,7 @@ class Arr
             return $array[$key];
         }
 
-        if (!str_contains($key, '.')) {
+        if (! str_contains($key, '.')) {
             return $array[$key] ?? static::value($default);
         }
 
@@ -80,14 +88,12 @@ class Arr
      *
      * If no key is given to the method, the entire array will be replaced.
      *
-     * @param  array  $array
-     * @param  string|int|null  $key
-     * @param  mixed  $value
-     * @return array
+     * @param int|string|null $key
+     * @param mixed           $value
      */
     public static function set(array &$array, $key, $value): array
     {
-        if (is_null($key)) {
+        if (null === $key) {
             return $array = $value;
         }
 
@@ -103,7 +109,7 @@ class Arr
             // If the key doesn't exist at this depth, we will just create an empty array
             // to hold the next value, allowing us to create the arrays to hold final
             // values at the correct depth. Then we'll keep digging into the array.
-            if (!isset($array[$key]) || !is_array($array[$key])) {
+            if (! isset($array[$key]) || ! is_array($array[$key])) {
                 $array[$key] = [];
             }
 
@@ -118,8 +124,9 @@ class Arr
     /**
      * Get a subset of the items from the given array.
      *
-     * @param  array  $array
-     * @param  array|string  $keys
+     * @param array        $array
+     * @param array|string $keys
+     *
      * @return array
      */
     public static function only($array, $keys)
@@ -130,8 +137,9 @@ class Arr
     /**
      * Return the default value of the given value.
      *
-     * @param  mixed  $value
-     * @param  mixed  ...$args
+     * @param mixed $value
+     * @param mixed ...$args
+     *
      * @return mixed
      */
     public static function value($value, ...$args)

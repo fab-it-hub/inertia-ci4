@@ -1,5 +1,14 @@
 <?php
 
+/**
+ * This file is part of Inertia.js Codeigniter 4.
+ *
+ * (c) 2023 Fab IT Hub <hello@fabithub.com>
+ *
+ * For the full copyright and license information, please view
+ * the LICENSE file that was distributed with this source code.
+ */
+
 namespace Inertia\Ssr;
 
 use Exception;
@@ -13,26 +22,26 @@ class HttpGateway implements Gateway
         /** @var \Inertia\Config\Inertia */
         $config = \config('Inertia');
 
-        if (!$config->isSsrEnabled) {
+        if (! $config->isSsrEnabled) {
             return null;
         }
 
         $url = str_replace('/render', '', $config->ssrUrl) . '/render';
 
         try {
-            $client = Services::curlRequest();
+            $client  = Services::curlRequest();
             $apiCall = $client->setJSON($page)->post($url, [
                 'headers' => [
                     'Content-Type' => 'application/json',
-                    'Accept'       => 'application/json'
-                ]
+                    'Accept'       => 'application/json',
+                ],
             ]);
             $response = \json_decode($apiCall->getBody(), true);
         } catch (Exception $e) {
             return null;
         }
 
-        if (\is_null($response)) {
+        if (null === $response) {
             return null;
         }
 

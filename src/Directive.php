@@ -1,5 +1,14 @@
 <?php
 
+/**
+ * This file is part of Inertia.js Codeigniter 4.
+ *
+ * (c) 2023 Fab IT Hub <hello@fabithub.com>
+ *
+ * For the full copyright and license information, please view
+ * the LICENSE file that was distributed with this source code.
+ */
+
 namespace Inertia;
 
 use Inertia\Config\Services;
@@ -11,7 +20,7 @@ class Directive
 
     public static function compile(array $page, string $expression = ''): string
     {
-        $id = trim(trim($expression), "\'\"") ?: 'app';
+        $id         = trim(trim($expression), "\\'\"") ?: 'app';
         $inertiaSsr = self::withSsr($page);
 
         $template = '<div id="' . $id . '" data-page="' . htmlentities(json_encode($page)) . '"></div>';
@@ -25,7 +34,7 @@ class Directive
 
     public static function compileHead(array $page): string
     {
-        $template = '';
+        $template   = '';
         $inertiaSsr = self::withSsr($page);
 
         if ($inertiaSsr instanceof Response) {
@@ -37,7 +46,7 @@ class Directive
 
     protected static function withSsr(array $page): Response|null
     {
-        if (!isset(self::$__inertiaSsr) && empty(self::$__inertiaSsr)) {
+        if (! isset(self::$__inertiaSsr) && empty(self::$__inertiaSsr)) {
             $__inertiaSsr = Services::httpGateway()->dispatch($page);
 
             self::$__inertiaSsr = $__inertiaSsr;
