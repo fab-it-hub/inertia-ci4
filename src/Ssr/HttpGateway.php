@@ -12,7 +12,6 @@
 namespace Inertia\Ssr;
 
 use Exception;
-use Inertia\Config\Services;
 use Inertia\Extras\Gateway;
 
 class HttpGateway implements Gateway
@@ -29,7 +28,10 @@ class HttpGateway implements Gateway
         $url = str_replace('/render', '', $config->ssrUrl) . '/render';
 
         try {
-            $client  = Services::curlRequest();
+            /**
+             * @var \CodeIgniter\HTTP\CURLRequest
+             */
+            $client  = service('curlRequest');
             $apiCall = $client->setJSON($page)->post($url, [
                 'headers' => [
                     'Content-Type' => 'application/json',

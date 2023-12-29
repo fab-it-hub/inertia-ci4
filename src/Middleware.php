@@ -11,14 +11,16 @@
 
 namespace Inertia;
 
+use Closure;
 use CodeIgniter\Filters\FilterInterface;
 use CodeIgniter\HTTP\RedirectResponse;
 use CodeIgniter\HTTP\RequestInterface;
 use CodeIgniter\HTTP\ResponseInterface;
+use Inertia\Extras\Http;
 
 class Middleware implements FilterInterface
 {
-    public function withVersion()
+    public function withVersion(): ?string
     {
         if (file_exists($manifest = './build/manifest.json')) {
             return md5_file($manifest);
@@ -27,6 +29,9 @@ class Middleware implements FilterInterface
         return null;
     }
 
+    /**
+     * @return array{alert: Closure(): ?string, errors: Closure(): object, flash: Closure(): array{success: ?string, error: ?string}}
+     */
     public function withShare(RequestInterface $request): array
     {
         return [
@@ -36,6 +41,11 @@ class Middleware implements FilterInterface
         ];
     }
 
+    /**
+     * @param array<int|string, mixed> $arguments
+     *
+     * @return RequestInterface|ResponseInterface|string|void
+     */
     public function before(RequestInterface $request, $arguments = null)
     {
         Inertia::version(fn () => $this->withVersion());
@@ -53,7 +63,7 @@ class Middleware implements FilterInterface
     {
         $response->setHeader('Vary', 'X-Inertia');
 
-        if (! $request->header('X-Inertia')) {
+        if (! $request->hasHeader('X-Inertia')) {
             return $response;
         }
 
@@ -61,7 +71,7 @@ class Middleware implements FilterInterface
             return $response;
         }
 
-        if (request()->is('get') && $request->hasHeader('X-Inertia-Version') && $request->header('X-Inertia-Version')->getValue() !== Inertia::getVersion()) {
+        if (request()->is('get') && Http::getHeaderValue('X-Inertia-Version')  !== Inertia::getVersion()) {
             $response = $this->onVersionChange($request);
         }
 
@@ -69,7 +79,10 @@ class Middleware implements FilterInterface
             $response = $this->onEmptyResponse();
         }
 
-        if ($response->getStatusCode() === $response::HTTP_FOUND && \in_array($request->getMethod(), ['put', 'patch', 'delete'], true)) {
+        if (
+            $response->getStatusCode() === $response::HTTP_FOUND
+            && (request()->is('put') || request()->is('patch') || request()->is('delete'))
+        ) {
             $response->setStatusCode($response::HTTP_SEE_OTHER);
         }
 
@@ -81,7 +94,7 @@ class Middleware implements FilterInterface
         return \redirect()->back();
     }
 
-    private function onVersionChange(RequestInterface $request): RedirectResponse
+    private function onVersionChange(RequestInterface $request): RedirectResponse|ResponseInterface
     {
         \session()->regenerate(true);
 
@@ -105,8 +118,8 @@ class Middleware implements FilterInterface
             return (object) [];
         }
 
-        if ($request->header('x-inertia-error-bag')) {
-            return (object) [$request->header('x-inertia-error-bag') => $errors];
+        if ($request->hasHeader('x-inertia-error-bag')) {
+            return (object) [Http::getHeaderValue('x-inertia-error-bag') => $errors];
         }
 
         return (object) $errors;

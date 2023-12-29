@@ -19,8 +19,8 @@ use Inertia\Config\Services;
  * @method static void   flushShared()
  * @method static mixed  getShared(?string $key, $default = null)
  * @method static string getVersion()
- * @method static string init($page, bool $isHead)
- * @method static \CodeIgniter\HTTP\RedirectResponse location(\CodeIgniter\HTTP\Request|string $url):
+ * @method static string init(array{component: string, version: string, url: string, props: array<string, mixed>} $page, bool $isHead)
+ * @method static \CodeIgniter\HTTP\RedirectResponse|\CodeIgniter\HTTP\ResponseInterface location(\CodeIgniter\HTTP\Request|string $url):
  * @method static \Inertia\Response render(string $component, array $props = [], array $viewData = [])
  * @method static void              share(string|array $key, $value = null)
  * @method static void              version(\Closure|string|null $version)
@@ -29,7 +29,12 @@ use Inertia\Config\Services;
  */
 class Inertia
 {
-    public static function __callStatic($method, $arguments)
+    /**
+     * @param array<int|string, mixed> $arguments
+     *
+     * @return mixed
+     */
+    public static function __callStatic(string $method, array $arguments)
     {
         return Services::inertia()->{$method}(...$arguments);
     }

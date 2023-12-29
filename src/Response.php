@@ -17,20 +17,31 @@ use Inertia\Extras\Http;
 
 class Response
 {
+    /**
+     * @var array<string, mixed>
+     */
     protected array $props      = [];
+
+    /**
+     * @var array<string, mixed>
+     */
     protected array $viewData   = [];
+
     protected string $version   = '';
     protected string $component = '';
     protected string $rootView  = 'app';
 
+    /**
+     * @param array<string, mixed> $props
+     */
     public function __construct(string $component, array $props, string $rootView = 'app', string $version = '')
     {
         $this->withComponent($component)->with($props)->withRootView($rootView)->withVersion($version);
     }
 
     /**
-     * @param array|string $key
-     * @param mixed        $value
+     * @param array<string, mixed>|string $key
+     * @param mixed                       $value
      *
      * @return $this
      */
@@ -53,8 +64,8 @@ class Response
     }
 
     /**
-     * @param array|string $key
-     * @param mixed        $value
+     * @param array<string, mixed>|string $key
+     * @param mixed                       $value
      *
      * @return $this
      */
@@ -69,7 +80,7 @@ class Response
         return $this;
     }
 
-    public function withVersion(string|int $version): self
+    public function withVersion(string $version): self
     {
         $this->version = $version;
 
@@ -95,6 +106,7 @@ class Response
             $prop = Arr::value($prop);
         });
 
+        /** @var array{component: string, version: string, url: string, props: array<string, mixed>} */
         $page = [
             'component' => $this->component,
             'props'     => $props,

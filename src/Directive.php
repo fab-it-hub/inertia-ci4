@@ -12,46 +12,54 @@
 namespace Inertia;
 
 use Inertia\Config\Services;
-use Inertia\Ssr\Response;
 
 class Directive
 {
-    protected static ?Response $__inertiaSsr;
+    protected static ?\Inertia\Ssr\Response $__inertiaSsr;
 
+    /**
+     * @param array{component: string, version: string, url: string, props: array<string, mixed>} $page
+     */
     public static function compile(array $page, string $expression = ''): string
     {
         $id         = trim(trim($expression), "\\'\"") ?: 'app';
-        $inertiaSsr = self::withSsr($page);
+        $inertiaSsr = static::withSsr($page);
 
         $template = '<div id="' . $id . '" data-page="' . htmlentities(json_encode($page)) . '"></div>';
 
-        if ($inertiaSsr instanceof Response) {
+        if ($inertiaSsr instanceof \Inertia\Ssr\Response) {
             $template = $inertiaSsr->body;
         }
 
         return implode(' ', array_map('trim', explode("\n", $template)));
     }
 
+    /**
+     * @param array{component: string, version: string, url: string, props: array<string, mixed>} $page
+     */
     public static function compileHead(array $page): string
     {
         $template   = '';
-        $inertiaSsr = self::withSsr($page);
+        $inertiaSsr = static::withSsr($page);
 
-        if ($inertiaSsr instanceof Response) {
+        if ($inertiaSsr instanceof \Inertia\Ssr\Response) {
             $template = $inertiaSsr->head;
         }
 
         return implode(' ', array_map('trim', explode("\n", $template)));
     }
 
-    protected static function withSsr(array $page): Response|null
+    /**
+     * @param array{component: string, version: string, url: string, props: array<string, mixed>} $page
+     */
+    protected static function withSsr(array $page): ?Ssr\Response
     {
-        if (! isset(self::$__inertiaSsr) && empty(self::$__inertiaSsr)) {
+        if (! isset(static::$__inertiaSsr) && empty(static::$__inertiaSsr)) {
             $__inertiaSsr = Services::httpGateway()->dispatch($page);
 
-            self::$__inertiaSsr = $__inertiaSsr;
+            static::$__inertiaSsr = $__inertiaSsr;
         }
 
-        return self::$__inertiaSsr;
+        return static::$__inertiaSsr;
     }
 }

@@ -14,13 +14,14 @@ namespace Inertia;
 use Closure;
 use CodeIgniter\HTTP\RedirectResponse;
 use CodeIgniter\HTTP\RequestInterface;
+use CodeIgniter\HTTP\ResponseInterface;
 use Inertia\Extras\Arr;
 use Inertia\Extras\Http;
 
 class ResponseFactory
 {
     /**
-     * @var array
+     * @var array<string, mixed>
      */
     protected $sharedProps = [];
 
@@ -29,6 +30,10 @@ class ResponseFactory
      */
     protected $version;
 
+    /**
+     * @param array<string, mixed>|string $key
+     * @param mixed                       $value
+     */
     public function share(string|array $key, $value = null): void
     {
         if (is_array($key)) {
@@ -38,6 +43,12 @@ class ResponseFactory
         }
     }
 
+    /**
+     * @param ?string $key
+     * @param mixed   $default
+     *
+     * @return array<string, mixed>
+     */
     public function getShared(?string $key, $default = null)
     {
         if ($key) {
@@ -65,6 +76,9 @@ class ResponseFactory
         return (string) Arr::value($this->version);
     }
 
+    /**
+     * @param array<string, mixed> $props
+     */
     public function render(string $component, array $props = []): string
     {
         /** @var Config\Inertia */
@@ -73,7 +87,7 @@ class ResponseFactory
         return (string) new Response($component, array_merge($this->sharedProps, $props), $config->rootView, $this->getVersion());
     }
 
-    public function location(RequestInterface|string $url): RedirectResponse
+    public function location(RequestInterface|string $url): RedirectResponse|ResponseInterface
     {
         if ($url instanceof RequestInterface) {
             $url = $url->getUri();
@@ -88,7 +102,9 @@ class ResponseFactory
         return \redirect()->to($url, \response()::HTTP_SEE_OTHER);
     }
 
-    public static function init($page, bool $isHead = false): string
+    /**
+     * @param array{component: string, version: string, url: string, props: array<string, mixed>} $page */
+    public static function init(array $page, bool $isHead = false): string
     {
         if ($isHead) {
             return Directive::compileHead($page);

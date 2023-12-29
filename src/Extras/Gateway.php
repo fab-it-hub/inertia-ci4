@@ -15,5 +15,8 @@ use Inertia\Ssr\Response;
 
 interface Gateway
 {
+    /**
+     * @param array{component: string, version: string, url: string, props: array<string, mixed>} $page
+     */
     public function dispatch(array $page): ?Response;
 }
