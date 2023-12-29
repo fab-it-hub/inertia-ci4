@@ -14,3 +14,7 @@ insert_final_newline = false
 [*.json]
 indent_size = 2
 insert_final_newline = true
+
+[phpstan.neon.dist]
+indent_size = 4
+indent_style = tab

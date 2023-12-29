@@ -28,5 +28,29 @@
     "allow-plugins": {
       "phpstan/extension-installer": true
     }
+  },
+  "scripts": {
+    "analyze": [
+      "Composer\\Config::disableProcessTimeout",
+      "phpstan analyze",
+      "psalm",
+      "rector process --dry-run"
+    ],
+    "sa": "@analyze",
+    "ci": [
+      "Composer\\Config::disableProcessTimeout",
+      "@cs",
+      "@deduplicate",
+      "@inspect",
+      "@analyze",
+      "@test"
+    ],
+    "cs": "php-cs-fixer fix --ansi --verbose --dry-run --diff",
+    "cs-fix": "php-cs-fixer fix --ansi --verbose --diff",
+    "style": "@cs-fix",
+    "deduplicate": "phpcpd app/ src/",
+    "inspect": "deptrac analyze --cache-file=build/deptrac.cache",
+    "mutate": "infection --threads=2 --skip-initial-tests --coverage=build/phpunit",
+    "test": "phpunit"
   }
 }
