@@ -1,13 +1,30 @@
 <?php
 
+/**
+ * This file is part of Inertia.js Codeigniter 4.
+ *
+ * (c) 2023 Fab IT Hub <hello@fabithub.com>
+ *
+ * For the full copyright and license information, please view
+ * the LICENSE file that was distributed with this source code.
+ */
+
 namespace Inertia;
 
+use Closure;
 use CodeIgniter\Filters\FilterInterface;
-use CodeIgniter\HTTP\{RedirectResponse, RequestInterface, ResponseInterface};
+use CodeIgniter\HTTP\RedirectResponse;
+use CodeIgniter\HTTP\RequestInterface;
+use CodeIgniter\HTTP\ResponseInterface;
+use CodeIgniter\Validation\ValidationInterface;
+use Inertia\Extras\Http;
 
+/**
+ * @psalm-api
+ */
 class Middleware implements FilterInterface
 {
-    public function withVersion()
+    public function withVersion(): string|false|null
     {
         if (file_exists($manifest = './build/manifest.json')) {
             return md5_file($manifest);
@@ -16,15 +33,24 @@ class Middleware implements FilterInterface
         return null;
     }
 
+    /**
+     * @psalm-return array{alert: Closure():?string, errors: Closure():object, flash: Closure():array{success: ?string, error: ?string}}
+     * @return array{alert: Closure():?string, errors: Closure():object, flash: Closure():array{success: ?string, error: ?string}}
+     */
     public function withShare(RequestInterface $request): array
     {
         return [
-            'alert'  => fn () => session()->getFlashdata('alert'),
+            'alert'  => static fn () => session()->getFlashdata('alert'),
             'errors' => fn () => $this->resolveValidationErrors($request),
-            'flash'  => fn () => ['success' => session()->getFlashdata('success'), 'error' => session()->getFlashdata('error')],
+            'flash'  => static fn () => ['success' => session()->getFlashdata('success'), 'error' => session()->getFlashdata('error')],
         ];
     }
 
+    /**
+     * @param array<int|string, mixed> $arguments
+     *
+     * @return void
+     */
     public function before(RequestInterface $request, $arguments = null)
     {
         Inertia::version(fn () => $this->withVersion());
@@ -34,8 +60,6 @@ class Middleware implements FilterInterface
     /**
      * Handle the incoming request.
      *
-     * @param  \CodeIgniter\HTTP\RequestInterface  $request
-     * @param  \CodeIgniter\HTTP\ResponseInterface  $response
      * @param null $arguments
      *
      * @return mixed
@@ -44,7 +68,7 @@ class Middleware implements FilterInterface
     {
         $response->setHeader('Vary', 'X-Inertia');
 
-        if (!$request->header('X-Inertia')) {
+        if (!$request->hasHeader('X-Inertia')) {
             return $response;
         }
 
@@ -52,7 +76,7 @@ class Middleware implements FilterInterface
             return $response;
         }
 
-        if (request()->is('get') && $request->hasHeader('X-Inertia-Version') && $request->header('X-Inertia-Version')->getValue() !== Inertia::getVersion()) {
+        if (request()->is('get') && Http::getHeaderValue('X-Inertia-Version')  !== Inertia::getVersion()) {
             $response = $this->onVersionChange($request);
         }
 
@@ -60,7 +84,10 @@ class Middleware implements FilterInterface
             $response = $this->onEmptyResponse();
         }
 
-        if ($response->getStatusCode() === $response::HTTP_FOUND && \in_array($request->getMethod(), ['put', 'patch', 'delete'])) {
+        if (
+            $response->getStatusCode() === $response::HTTP_FOUND
+            && (request()->is('put') || request()->is('patch') || request()->is('delete'))
+        ) {
             $response->setStatusCode($response::HTTP_SEE_OTHER);
         }
 
@@ -72,26 +99,22 @@ class Middleware implements FilterInterface
         return \redirect()->back();
     }
 
-    private function onVersionChange(RequestInterface $request): RedirectResponse
+    private function onVersionChange(RequestInterface $request): RedirectResponse|ResponseInterface
     {
         \session()->regenerate(true);
 
         return Inertia::location($request->getUri());
     }
 
-
     /**
      * Resolves and prepares validation errors in such
      * a way that they are easier to use client-side.
-     *
-     * @param  \CodeIgniter\HTTP\RequestInterface  $request
-     * @return object
      */
     private function resolveValidationErrors(RequestInterface $request): object
     {
         service('session');
 
-        /** @var \CodeIgniter\Validation\ValidationInterface */
+        /** @var ValidationInterface */
         $validation = service('validation');
 
         $errors = session()->getFlashdata('errors') ?? $validation->getErrors();
@@ -100,8 +123,8 @@ class Middleware implements FilterInterface
             return (object) [];
         }
 
-        if ($request->header('x-inertia-error-bag')) {
-            return (object) [$request->header('x-inertia-error-bag') => $errors];
+        if ($request->hasHeader('x-inertia-error-bag')) {
+            return (object) [Http::getHeaderValue('x-inertia-error-bag') => $errors];
         }
 
         return (object) $errors;

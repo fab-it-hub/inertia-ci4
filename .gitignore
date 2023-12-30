@@ -122,7 +122,14 @@ nb-configuration.xml
 # Visual Studio Code
 .vscode/
 
+# PHPUnit
 /results/
 /phpunit*.xml
 /.phpunit.*.cache
 
+# PHP CS Fixer
+.php-cs-fixer.php
+.php-cs-fixer.cache
+
+# Deptrac
+.deptrac.cache

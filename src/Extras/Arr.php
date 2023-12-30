@@ -1,5 +1,14 @@
 <?php
 
+/**
+ * This file is part of Inertia.js Codeigniter 4.
+ *
+ * (c) 2023 Fab IT Hub <hello@fabithub.com>
+ *
+ * For the full copyright and license information, please view
+ * the LICENSE file that was distributed with this source code.
+ */
+
 namespace Inertia\Extras;
 
 use ArrayAccess;
@@ -10,8 +19,7 @@ class Arr
     /**
      * Determine whether the given value is array accessible.
      *
-     * @param  mixed  $value
-     * @return bool
+     * @param mixed $value
      */
     public static function accessible($value): bool
     {
@@ -21,18 +29,12 @@ class Arr
     /**
      * Determine if the given key exists in the provided array.
      *
-     * @param  \ArrayAccess|array  $array
-     * @param  string|int  $key
-     * @return bool
+     * @param array<mixed>|ArrayAccess $array
      */
-    public static function exists($array, $key): bool
+    public static function exists($array, int|string $key): bool
     {
         if ($array instanceof ArrayAccess) {
             return $array->offsetExists($key);
-        }
-
-        if (is_float($key)) {
-            $key = (string) $key;
         }
 
         return array_key_exists($key, $array);
@@ -41,9 +43,10 @@ class Arr
     /**
      * Get an item from an array using "dot" notation.
      *
-     * @param  \ArrayAccess|array  $array
-     * @param  string|int|null  $key
-     * @param  mixed  $default
+     * @param array<mixed>|ArrayAccess $array
+     * @param int|string|null          $key
+     * @param mixed                    $default
+     *
      * @return mixed
      */
     public static function get($array, $key, $default = null)
@@ -52,7 +55,7 @@ class Arr
             return static::value($default);
         }
 
-        if (is_null($key)) {
+        if (null === $key) {
             return $array;
         }
 
@@ -80,14 +83,17 @@ class Arr
      *
      * If no key is given to the method, the entire array will be replaced.
      *
-     * @param  array  $array
-     * @param  string|int|null  $key
-     * @param  mixed  $value
-     * @return array
+     * @param array<mixed>    $array
+     * @param int|string|null $key
+     * @param mixed           $value
+     *
+     * @psalm-api
+     *
+     * @return array<mixed>
      */
     public static function set(array &$array, $key, $value): array
     {
-        if (is_null($key)) {
+        if (null === $key) {
             return $array = $value;
         }
 
@@ -118,9 +124,10 @@ class Arr
     /**
      * Get a subset of the items from the given array.
      *
-     * @param  array  $array
-     * @param  array|string  $keys
-     * @return array
+     * @param array<int|string, mixed> $array
+     * @param array<int|string>|string $keys
+     *
+     * @return array<int|string, mixed>
      */
     public static function only($array, $keys)
     {
@@ -130,8 +137,9 @@ class Arr
     /**
      * Return the default value of the given value.
      *
-     * @param  mixed  $value
-     * @param  mixed  ...$args
+     * @param mixed $value
+     * @param mixed ...$args
+     *
      * @return mixed
      */
     public static function value($value, ...$args)
