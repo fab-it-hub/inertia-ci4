@@ -130,3 +130,6 @@ nb-configuration.xml
 # PHP CS Fixer
 .php-cs-fixer.php
 .php-cs-fixer.cache
+
+# Deptrac
+.deptrac.cache
