@@ -16,11 +16,15 @@ use CodeIgniter\Filters\FilterInterface;
 use CodeIgniter\HTTP\RedirectResponse;
 use CodeIgniter\HTTP\RequestInterface;
 use CodeIgniter\HTTP\ResponseInterface;
+use CodeIgniter\Validation\ValidationInterface;
 use Inertia\Extras\Http;
 
+/**
+ * @psalm-api
+ */
 class Middleware implements FilterInterface
 {
-    public function withVersion(): ?string
+    public function withVersion(): string|false|null
     {
         if (file_exists($manifest = './build/manifest.json')) {
             return md5_file($manifest);
@@ -30,7 +34,8 @@ class Middleware implements FilterInterface
     }
 
     /**
-     * @return array{alert: Closure(): ?string, errors: Closure(): object, flash: Closure(): array{success: ?string, error: ?string}}
+     * @psalm-return array{alert: Closure():?string, errors: Closure():object, flash: Closure():array{success: ?string, error: ?string}}
+     * @return array{alert: Closure():?string, errors: Closure():object, flash: Closure():array{success: ?string, error: ?string}}
      */
     public function withShare(RequestInterface $request): array
     {
@@ -44,7 +49,7 @@ class Middleware implements FilterInterface
     /**
      * @param array<int|string, mixed> $arguments
      *
-     * @return RequestInterface|ResponseInterface|string|void
+     * @return void
      */
     public function before(RequestInterface $request, $arguments = null)
     {
@@ -63,7 +68,7 @@ class Middleware implements FilterInterface
     {
         $response->setHeader('Vary', 'X-Inertia');
 
-        if (! $request->hasHeader('X-Inertia')) {
+        if (!$request->hasHeader('X-Inertia')) {
             return $response;
         }
 
@@ -109,12 +114,12 @@ class Middleware implements FilterInterface
     {
         service('session');
 
-        /** @var \CodeIgniter\Validation\ValidationInterface */
+        /** @var ValidationInterface */
         $validation = service('validation');
 
         $errors = session()->getFlashdata('errors') ?? $validation->getErrors();
 
-        if (! $errors) {
+        if (!$errors) {
             return (object) [];
         }
 

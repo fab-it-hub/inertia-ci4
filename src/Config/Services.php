@@ -12,24 +12,26 @@
 namespace Inertia\Config;
 
 use CodeIgniter\Config\BaseService;
+use Inertia\ResponseFactory;
+use Inertia\Ssr\HttpGateway;
 
 class Services extends BaseService
 {
-    public static function inertia(bool $getShared = true): ?\Inertia\ResponseFactory
+    public static function inertia(bool $getShared = true): ?ResponseFactory
     {
         if ($getShared) {
             return static::getSharedInstance('inertia');
         }
 
-        return new \Inertia\ResponseFactory();
+        return new ResponseFactory();
     }
 
-    public static function httpGateway(bool $getShared = true): ?\Inertia\Ssr\HttpGateway
+    public static function httpGateway(bool $getShared = true): ?HttpGateway
     {
         if ($getShared) {
             return static::getSharedInstance('httpGateway');
         }
 
-        return new \Inertia\Ssr\HttpGateway();
+        return new HttpGateway();
     }
 }

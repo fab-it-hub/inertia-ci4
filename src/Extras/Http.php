@@ -18,7 +18,11 @@ class Http
         return request()->hasHeader('X-Inertia');
     }
 
-    public static function getHeaderValue(string $header, string $default = ''): string
+    /**
+     * @return (string|string[])[]|string
+     * @psalm-return array<int|string, array<string, string>|string>|string
+     */
+    public static function getHeaderValue(string $header, string $default = ''): array|string
     {
         if (request()->hasHeader($header)) {
             return request()->header($header)->getValue();

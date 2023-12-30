@@ -11,17 +11,19 @@
 
 namespace Inertia\Ssr;
 
+use CodeIgniter\HTTP\CURLRequest;
 use Exception;
+use Inertia\Config\Inertia;
 use Inertia\Extras\Gateway;
 
 class HttpGateway implements Gateway
 {
     public function dispatch(array $page): ?Response
     {
-        /** @var \Inertia\Config\Inertia */
+        /** @var Inertia */
         $config = \config('Inertia');
 
-        if (! $config->isSsrEnabled) {
+        if (!$config->isSsrEnabled) {
             return null;
         }
 
@@ -29,7 +31,7 @@ class HttpGateway implements Gateway
 
         try {
             /**
-             * @var \CodeIgniter\HTTP\CURLRequest
+             * @var CURLRequest
              */
             $client  = service('curlRequest');
             $apiCall = $client->setJSON($page)->post($url, [

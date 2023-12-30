@@ -51,7 +51,7 @@ class Arr
      */
     public static function get($array, $key, $default = null)
     {
-        if (! static::accessible($array)) {
+        if (!static::accessible($array)) {
             return static::value($default);
         }
 
@@ -63,7 +63,7 @@ class Arr
             return $array[$key];
         }
 
-        if (! str_contains($key, '.')) {
+        if (!str_contains($key, '.')) {
             return $array[$key] ?? static::value($default);
         }
 
@@ -87,6 +87,8 @@ class Arr
      * @param int|string|null $key
      * @param mixed           $value
      *
+     * @psalm-api
+     *
      * @return array<mixed>
      */
     public static function set(array &$array, $key, $value): array
@@ -107,7 +109,7 @@ class Arr
             // If the key doesn't exist at this depth, we will just create an empty array
             // to hold the next value, allowing us to create the arrays to hold final
             // values at the correct depth. Then we'll keep digging into the array.
-            if (! isset($array[$key]) || ! is_array($array[$key])) {
+            if (!isset($array[$key]) || !is_array($array[$key])) {
                 $array[$key] = [];
             }
 

@@ -56,38 +56,21 @@ class Response
         return $this;
     }
 
-    public function withComponent(string $component): self
+    public function withComponent(string $component): static
     {
         $this->component = $component;
 
         return $this;
     }
 
-    /**
-     * @param array<string, mixed>|string $key
-     * @param mixed                       $value
-     *
-     * @return $this
-     */
-    public function withViewData($key, $value = null): self
-    {
-        if (is_array($key)) {
-            $this->viewData = array_merge($this->viewData, $key);
-        } else {
-            $this->viewData[$key] = $value;
-        }
-
-        return $this;
-    }
-
-    public function withVersion(string $version): self
+    public function withVersion(string $version): static
     {
         $this->version = $version;
 
         return $this;
     }
 
-    public function withRootView(string $rootView): self
+    public function withRootView(string $rootView): static
     {
         $this->rootView = $rootView;
 

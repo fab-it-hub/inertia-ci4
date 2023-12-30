@@ -12,12 +12,14 @@
 namespace Inertia;
 
 use Closure;
-use CodeIgniter\HTTP\RedirectResponse;
 use CodeIgniter\HTTP\RequestInterface;
 use CodeIgniter\HTTP\ResponseInterface;
 use Inertia\Extras\Arr;
 use Inertia\Extras\Http;
 
+/**
+ * @psalm-api
+ */
 class ResponseFactory
 {
     /**
@@ -33,6 +35,8 @@ class ResponseFactory
     /**
      * @param array<string, mixed>|string $key
      * @param mixed                       $value
+     *
+     * @psalm-api
      */
     public function share(string|array $key, $value = null): void
     {
@@ -44,10 +48,11 @@ class ResponseFactory
     }
 
     /**
-     * @param ?string $key
-     * @param mixed   $default
+     * @param mixed $default
      *
      * @return array<string, mixed>
+     *
+     * @psalm-api
      */
     public function getShared(?string $key, $default = null)
     {
@@ -58,6 +63,9 @@ class ResponseFactory
         return $this->sharedProps;
     }
 
+    /**
+     * @psalm-api
+     */
     public function flushShared(): void
     {
         $this->sharedProps = [];
@@ -65,18 +73,25 @@ class ResponseFactory
 
     /**
      * @param Closure|string|null $version
+     *
+     * @psalm-api
      */
     public function version($version): void
     {
         $this->version = $version;
     }
 
+    /**
+     * @psalm-api
+     */
     public function getVersion(): string
     {
         return (string) Arr::value($this->version);
     }
 
     /**
+     * @psalm-api
+     *
      * @param array<string, mixed> $props
      */
     public function render(string $component, array $props = []): string
@@ -87,7 +102,10 @@ class ResponseFactory
         return (string) new Response($component, array_merge($this->sharedProps, $props), $config->rootView, $this->getVersion());
     }
 
-    public function location(RequestInterface|string $url): RedirectResponse|ResponseInterface
+    /**
+     * @psalm-api
+     */
+    public function location(RequestInterface|string $url): ResponseInterface
     {
         if ($url instanceof RequestInterface) {
             $url = $url->getUri();
@@ -103,7 +121,10 @@ class ResponseFactory
     }
 
     /**
-     * @param array{component: string, version: string, url: string, props: array<string, mixed>} $page */
+     * @param array{component: string, version: string, url: string, props: array<string, mixed>} $page
+     *
+     * @psalm-api
+     */
     public static function init(array $page, bool $isHead = false): string
     {
         if ($isHead) {

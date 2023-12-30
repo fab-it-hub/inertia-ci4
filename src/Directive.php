@@ -12,10 +12,11 @@
 namespace Inertia;
 
 use Inertia\Config\Services;
+use Inertia\Ssr\Response;
 
 class Directive
 {
-    protected static ?\Inertia\Ssr\Response $__inertiaSsr;
+    protected static ?Response $__inertiaSsr = null;
 
     /**
      * @param array{component: string, version: string, url: string, props: array<string, mixed>} $page
@@ -27,7 +28,7 @@ class Directive
 
         $template = '<div id="' . $id . '" data-page="' . htmlentities(json_encode($page)) . '"></div>';
 
-        if ($inertiaSsr instanceof \Inertia\Ssr\Response) {
+        if ($inertiaSsr instanceof Response) {
             $template = $inertiaSsr->body;
         }
 
@@ -42,7 +43,7 @@ class Directive
         $template   = '';
         $inertiaSsr = static::withSsr($page);
 
-        if ($inertiaSsr instanceof \Inertia\Ssr\Response) {
+        if ($inertiaSsr instanceof Response) {
             $template = $inertiaSsr->head;
         }
 
@@ -52,9 +53,9 @@ class Directive
     /**
      * @param array{component: string, version: string, url: string, props: array<string, mixed>} $page
      */
-    protected static function withSsr(array $page): ?Ssr\Response
+    protected static function withSsr(array $page): ?Response
     {
-        if (! isset(static::$__inertiaSsr) && empty(static::$__inertiaSsr)) {
+        if (!isset(static::$__inertiaSsr) && empty(static::$__inertiaSsr)) {
             $__inertiaSsr = Services::httpGateway()->dispatch($page);
 
             static::$__inertiaSsr = $__inertiaSsr;
