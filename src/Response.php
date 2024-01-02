@@ -11,7 +11,10 @@
 
 namespace Inertia;
 
-use Inertia\Config\Services;
+use CodeIgniter\HTTP\RequestInterface;
+use CodeIgniter\HTTP\ResponseInterface;
+use CodeIgniter\View\View;
+use Config\View as ConfigView;
 use Inertia\Extras\Arr;
 use Inertia\Extras\Http;
 
@@ -29,14 +32,13 @@ class Response
 
     protected string $version   = '';
     protected string $component = '';
-    protected string $rootView  = 'app';
 
     /**
      * @param array<string, mixed> $props
      */
-    public function __construct(string $component, array $props, string $rootView = 'app', string $version = '')
+    public function __construct(string $component, array $props, string $version = '')
     {
-        $this->withComponent($component)->with($props)->withRootView($rootView)->withVersion($version);
+        $this->withComponent($component)->with($props)->withVersion($version);
     }
 
     /**
@@ -70,18 +72,13 @@ class Response
         return $this;
     }
 
-    public function withRootView(string $rootView): static
+    public function toResponse(?RequestInterface $request = null): View|ResponseInterface
     {
-        $this->rootView = $rootView;
+        $request ??= request();
 
-        return $this;
-    }
+        $only = array_filter(explode(',', Http::getHeaderValue('X-Inertia-Partial-Data', '', $request)));
 
-    public function __toString()
-    {
-        $only = array_filter(explode(',', Http::getHeaderValue('X-Inertia-Partial-Data')));
-
-        $props = ($only && Http::getHeaderValue('X-Inertia-Partial-Component') === $this->component)
+        $props = ($only && Http::getHeaderValue('X-Inertia-Partial-Component', '', $request) === $this->component)
             ? Arr::only($this->props, $only)
             : $this->props;
 
@@ -93,20 +90,17 @@ class Response
         $page = [
             'component' => $this->component,
             'props'     => $props,
-            'url'       => \request()->getUri()->getPath(),
+            'url'       => $request->getUri()->getPath(),
             'version'   => $this->version,
         ];
 
-        if (Http::isInertiaRequest()) {
-            return \response()
-                ->setJSON($page, true)
-                ->setHeader('Vary', 'X-Inertia')
-                ->setHeader('X-Inertia', 'true')
-                ->getJSON();
+        if (Http::isInertiaRequest($request)) {
+            return \response()->setJSON($page, true)->setHeader('Vary', 'X-Inertia')->setHeader('X-Inertia', 'true');
         }
 
-        return Services::renderer()
-            ->setData($this->viewData + ['page' => $page], 'raw')
-            ->render($this->rootView);
+        $view = new View(new ConfigView());
+        $view->setData($this->viewData + ['page' => $page], 'raw');
+
+        return $view;
     }
 }
