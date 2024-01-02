@@ -39,11 +39,16 @@ Please provide some steps for the reviewer to test your change. If you have wrot
 3. Validate you see the thing working
 -->
 
-
 ## Added to documentation?
 
 - [ ] 📜 README.md
 - [ ] 🙅 no documentation needed
+
+## Added Test?
+
+- [ ] 👍 yes
+- [ ] 🙅 no, because they aren't necessary
+- [ ] 🙋 no, because i need help
 
 ## [optional] Are there any post-deployment tasks we need to perform?
 
