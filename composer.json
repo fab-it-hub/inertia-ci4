@@ -1,15 +1,33 @@
 {
   "name": "fabithub/inertia-ci4",
   "description": "The Codeigniter 4 adapter for inertia.js",
-  "version": "0.0.1",
-  "type": "library",
   "license": "MIT",
+  "type": "library",
+  "version": "0.0.1",
   "authors": [
     {
       "name": "Krishna Gujjjar",
       "email": "krishnagujjjar@gmail.com"
     }
   ],
+  "require": {
+    "php": "^8.0",
+    "codeigniter4/framework": "^4.3"
+  },
+  "require-dev": {
+    "codeigniter/coding-standard": "^1.7",
+    "ergebnis/composer-normalize": "^2.41",
+    "icanhazstring/composer-unused": "^0.8.11",
+    "infection/infection": "^0.27.9",
+    "pestphp/pest": "^2.30",
+    "pestphp/pest-plugin-faker": "^2.0",
+    "pestphp/pest-plugin-type-coverage": "^2.6",
+    "phpstan/phpstan": "^1.10",
+    "phpunit/phpunit": "^10.5",
+    "qossmic/deptrac-shim": "^1.0",
+    "rector/rector": "^0.18.13",
+    "vimeo/psalm": "^5.18"
+  },
   "minimum-stability": "dev",
   "prefer-stable": true,
   "autoload": {
@@ -17,21 +35,24 @@
       "Inertia\\": "src/"
     }
   },
-  "require": {
-    "php": "^8.0||^8.1||^8.2||^8.3",
-    "codeigniter4/framework": "^4.3|^4.4"
-  },
-  "require-dev": {
-    "codeigniter4/devkit": "^1.1",
-    "icanhazstring/composer-unused": "^0.8.11",
-    "qossmic/deptrac-shim": "^1.0"
+  "autoload-dev": {
+    "psr-4": {
+      "Tests\\": "tests/",
+      "Tests\\Support\\": "tests/_support/"
+    }
   },
   "config": {
     "allow-plugins": {
+      "ergebnis/composer-normalize": true,
+      "infection/extension-installer": true,
+      "pestphp/pest-plugin": true,
       "phpstan/extension-installer": true
     }
   },
   "scripts": {
+    "post-install-cmd": [
+      "@normalize"
+    ],
     "analyze": [
       "Composer\\Config::disableProcessTimeout",
       "phpstan analyze",
@@ -39,7 +60,6 @@
       "rector process --dry-run",
       "@unused"
     ],
-    "sa": "@analyze",
     "ci": [
       "Composer\\Config::disableProcessTimeout",
       "@cs",
@@ -50,11 +70,12 @@
     ],
     "cs": "php-cs-fixer fix --ansi --verbose --dry-run --diff",
     "cs-fix": "php-cs-fixer fix --ansi --verbose --diff",
-    "style": "@cs-fix",
     "deduplicate": "phpcpd src/",
-    "unused": "composer-unused",
     "inspect": "deptrac analyze --cache-file=build/deptrac.cache",
-    "mutate": "infection --threads=2 --skip-initial-tests --coverage=build/phpunit",
-    "test": "phpunit"
+    "mutate": "infection --threads=4 --coverage=build/pest --skip-initial-tests --test-framework=pest",
+    "sa": "@analyze",
+    "style": "@cs-fix",
+    "test": "XDEBUG_MODE=coverage pest",
+    "unused": "composer-unused"
   }
 }
