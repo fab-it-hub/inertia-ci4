@@ -11,21 +11,27 @@
 
 namespace Inertia\Extras;
 
+use CodeIgniter\HTTP\RequestInterface;
+
 class Http
 {
-    public static function isInertiaRequest(): bool
+    public static function isInertiaRequest(?RequestInterface $request = null): bool
     {
-        return request()->hasHeader('X-Inertia');
+        $request ??= request();
+
+        return $request->hasHeader('X-Inertia');
     }
 
     /**
      * @return (string|string[])[]|string
      * @psalm-return array<int|string, array<string, string>|string>|string
      */
-    public static function getHeaderValue(string $header, string $default = ''): array|string
+    public static function getHeaderValue(string $header, string $default = '', ?RequestInterface $request = null): array|string
     {
-        if (request()->hasHeader($header)) {
-            return request()->header($header)->getValue();
+        $request ??= request();
+
+        if ($request->hasHeader($header)) {
+            return $request->header($header)->getValue();
         }
 
         return $default;
