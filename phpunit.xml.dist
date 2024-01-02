@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.5/phpunit.xsd"
+         bootstrap="vendor/codeigniter4/framework/system/Test/bootstrap.php"
+         colors="true"
+         cacheDirectory="build/pest"
+         executionOrder="depends,defects"
+         failOnRisky="true"
+         failOnWarning="true">
+    <testsuites>
+        <testsuite name="Default Test Suite">
+            <directory suffix="Test.php">tests</directory>
+        </testsuite>
+    </testsuites>
+
+    <source restrictDeprecations="true" restrictNotices="true" restrictWarnings="true">
+        <include>
+            <directory suffix=".php">src</directory>
+        </include>
+    </source>
+    <coverage includeUncoveredFiles="true"
+          pathCoverage="false"
+          ignoreDeprecatedCodeUnits="true"
+          disableCodeCoverageIgnore="true">
+        <report>
+            <clover outputFile="build/pest/clover.xml"/>
+            <html outputDirectory="build/pest/html" lowUpperBound="50" highLowerBound="90"/>
+            <php outputFile="build/pest/coverage.serialized"/>
+            <text outputFile="php://stdout" showUncoveredFiles="false" showOnlySummary="true"/>
+            <xml outputDirectory="build/pest/xml-coverage"/>
+        </report>
+    </coverage>
+    <logging>
+        <junit outputFile="build/pest/coverage.junit.xml"/>
+    </logging>
+</phpunit>

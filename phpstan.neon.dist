@@ -3,7 +3,6 @@ parameters:
 	level: 6
 	paths:
 		- src/
-		- tests/
 	bootstrapFiles:
 		- vendor/codeigniter4/framework/system/Test/bootstrap.php
 	ignoreErrors:

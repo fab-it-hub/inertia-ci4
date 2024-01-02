@@ -14,6 +14,7 @@ namespace Inertia;
 use Closure;
 use CodeIgniter\HTTP\RequestInterface;
 use CodeIgniter\HTTP\ResponseInterface;
+use CodeIgniter\View\View;
 use Inertia\Extras\Arr;
 use Inertia\Extras\Http;
 
@@ -99,7 +100,13 @@ class ResponseFactory
         /** @var Config\Inertia */
         $config = \config('Inertia');
 
-        return (string) new Response($component, array_merge($this->sharedProps, $props), $config->rootView, $this->getVersion());
+        $response = (new Response($component, array_merge($this->sharedProps, $props), $this->getVersion()))->toResponse();
+
+        if ($response instanceof View) {
+            return $response->render($config->rootView);
+        }
+
+        return $response->getJSON();
     }
 
     /**
