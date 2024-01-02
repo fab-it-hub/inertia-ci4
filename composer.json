@@ -66,7 +66,8 @@
       "@deduplicate",
       "@inspect",
       "@analyze",
-      "@test"
+      "@test",
+      "@mutate"
     ],
     "cs": "php-cs-fixer fix --ansi --verbose --dry-run --diff",
     "cs-fix": "php-cs-fixer fix --ansi --verbose --diff",
@@ -75,7 +76,7 @@
     "mutate": "infection --threads=4 --coverage=build/pest --skip-initial-tests --test-framework=pest",
     "sa": "@analyze",
     "style": "@cs-fix",
-    "test": "XDEBUG_MODE=coverage pest",
+    "test": "XDEBUG_MODE=coverage pest --coverage",
     "unused": "composer-unused"
   }
 }
