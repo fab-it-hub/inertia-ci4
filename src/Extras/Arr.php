@@ -29,7 +29,7 @@ class Arr
     /**
      * Determine if the given key exists in the provided array.
      *
-     * @param array<mixed>|ArrayAccess $array
+     * @param ArrayAccess|list<mixed> $array
      */
     public static function exists($array, int|string $key): bool
     {
@@ -43,9 +43,9 @@ class Arr
     /**
      * Get an item from an array using "dot" notation.
      *
-     * @param array<mixed>|ArrayAccess $array
-     * @param int|string|null          $key
-     * @param mixed                    $default
+     * @param array<string, mixed>|ArrayAccess $array
+     * @param int|string|null                  $key
+     * @param mixed                            $default
      *
      * @return mixed
      */
@@ -83,13 +83,13 @@ class Arr
      *
      * If no key is given to the method, the entire array will be replaced.
      *
-     * @param array<mixed>    $array
+     * @param list<mixed>     $array
      * @param int|string|null $key
      * @param mixed           $value
      *
      * @psalm-api
      *
-     * @return array<mixed>
+     * @return list<mixed>
      */
     public static function set(array &$array, $key, $value): array
     {
@@ -125,7 +125,7 @@ class Arr
      * Get a subset of the items from the given array.
      *
      * @param array<int|string, mixed> $array
-     * @param array<int|string>|string $keys
+     * @param list<int|string>|string  $keys
      *
      * @return array<int|string, mixed>
      */

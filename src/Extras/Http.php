@@ -23,7 +23,7 @@ class Http
     }
 
     /**
-     * @return (string|string[])[]|string
+     * @return list<list<string>|string>|string
      * @psalm-return array<int|string, array<string, string>|string>|string
      */
     public static function getHeaderValue(string $header, string $default = '', ?RequestInterface $request = null): array|string
