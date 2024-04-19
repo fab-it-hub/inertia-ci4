@@ -48,10 +48,8 @@ class Middleware implements FilterInterface
 
     /**
      * @param array<int|string, mixed> $arguments
-     *
-     * @return void
      */
-    public function before(RequestInterface $request, $arguments = null)
+    public function before(RequestInterface $request, $arguments = null): void
     {
         Inertia::version(fn () => $this->withVersion());
         Inertia::share($this->withShare($request));

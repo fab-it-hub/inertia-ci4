@@ -36,6 +36,8 @@ class Inertia
     /**
      * @param array<int|string, mixed> $arguments
      *
+     * @psalm-api
+     *
      * @return mixed
      */
     public static function __callStatic(string $method, array $arguments)
